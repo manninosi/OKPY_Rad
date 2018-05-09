@@ -69,20 +69,18 @@ def pipeout_assemble(Data, Bytes):
     result = Output_Reversed[::-1]
     return result
 
-"""
-Detection of peaks for gamma spectrum. Author of code is cited.
-"""
 
 
-__author__ = "Marcos Duarte, https://github.com/demotu/BMC"
-__version__ = "1.0.4"
-__license__ = "MIT"
 
 
 def detect_peaks(x, mph=None, mpd=1, threshold=0, edge='rising',
                  kpsh=False, valley=False, show=False, ax=None):
 
-    """Detect peaks in data based on their amplitude and other features.
+    """Detect peaks in data based on their amplitude and other features
+
+    __author__ = "Marcos Duarte, https://github.com/demotu/BMC"
+    __version__ = "1.0.4"
+    __license__ = "MIT"
 
     Parameters
     ----------
