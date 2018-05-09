@@ -37,9 +37,11 @@ Testing PipeOut_Assemble with a bytearray:
 """
 
 def create_byte_array_hex(array_length):
-    """
-    Creation of a 32-bit byte array that is similar to what is Outputed from
-    Opal Kellys ReadFromPipeOut.
+    """Creation of a 32-bit byte array that is similar to what is Outputed from
+    Opal Kellys ReadFromPipeOut. Will create a random number 32-bit number and
+    continously append to an array.
+
+    array_length(int):How many values to evaluate when testing pipeout_assemble
     """
     Data = bytearray() #Create Empty bytearray
     Value_Array = []
@@ -52,7 +54,7 @@ def create_byte_array_hex(array_length):
         #Pad with 0's to ensure 32-bits
 
         Value_Array_Str[i] = 32%len(Value_Array[i]) *'0' + str(Value_Array[i])
-        while len(Value_Array_Str[i]) < 32:
+        while len(Value_Array_Str[i]) < 32:#Keep adding '0' bits till it is 32 bits long
             Value_Array_Str[i] = '0' + str(Value_Array_Str[i])
         for q in range(4):
             Data.append(int(Value_Array_Str[i][(q*8):8+(q*8)],2))
@@ -63,24 +65,19 @@ def test_pipe_assemble():
     #data = bytearray()
     obs,data = create_byte_array_hex(4) #Change this value to make longer arrays
     est = pipeout_assemble(data, 4)
-#    print "Actual"
-#    print obs
-#    print "Actual Byte Array"
-#    print data
-#    print "PipeOut Assemble Results"
-#    print est
     est = est[::-1]
     for i in range(len(obs)):
         print "Testing Value Number %f" %i
         assert est[i] == int(obs[i],2)
 
-"""
-TESTING DETECT PEAK FUNCTION
 
-First create a function to generate an array for gaussian
-"""
 
 def gaussian(x, mu, sig):
+    """Creation of a simple gaussian function
+    x(float/int): value to evaluate the gaussian
+    mu(float/int): mean of the function
+    sig(float/int): variance of the gaussian
+    """
     return (float(1)/math.sqrt(2*math.pi*sig**2))*np.exp(-((x-mu)**2)/(2*sig**2))
 
 
@@ -107,4 +104,3 @@ def test_detect_peaks():
     #Created by linspace
     for i in range(len(mu)):
        assert np.allclose(detect_peaks(y)[i]/float(10), mu[i])
-test_detect_peaks()
