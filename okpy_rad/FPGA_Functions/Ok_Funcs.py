@@ -10,7 +10,7 @@ An error will occur if the appropriate package is not imported.
 import ok
 from tkinter import *
 from tkFileDialog import askopenfilename, asksaveasfilename
-from Ok_Analysis import *
+from ok_analysis import *
 import csv
 import os
 
