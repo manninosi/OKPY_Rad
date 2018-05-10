@@ -52,7 +52,6 @@ class RadDevice():
                 if row[-1] == '0':
                     wire_in = (map(int,row))
                     print wire_in
+                    xem.SetWireInValue(wire_in[0],wire_in[1],2**32-1)
                 elif row[-1] == '1':
                     trigger_in.append(map(int,row))
-        print wire_in
-        print trigger_in
