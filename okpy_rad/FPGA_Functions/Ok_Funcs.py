@@ -14,14 +14,14 @@ from ok_analysis import *
 import csv
 import os
 
-class RadDevice():
+class RadDevice(object):
     """
     Class to designate FPGA systems at Oregon State University to connect them
     via the USB.
     """
 
     def __init__(self):
-        #pass
+
         self.xem = ok.okCFrontPanel()
         self.xem.OpenBySerial("")
 
@@ -41,8 +41,10 @@ class RadDevice():
         self.xem.ConfigureFPGA(str(Bit_File))
         return None
 
-    def auto_update_settings(self):
-        """Grabs file to update a series of WireIns from Opal Kelly   """
+    def auto_wirein(self):
+        """Grabs settings.csv file to update a series of WireIns from
+        Opal Kelly. Settings.csv file is described in the README
+        """
         file_dir = os.path.join(os.getcwd(), 'settings.csv')
         wire_in = []
         trigger_in = []
@@ -50,8 +52,15 @@ class RadDevice():
             spamreader = csv.reader(csvfile, delimiter = ',')
             for row in spamreader:
                 if row[-1] == '0':
-                    wire_in = (map(int,row))
-                    print wire_in
-                    xem.SetWireInValue(wire_in[0],wire_in[1],2**32-1)
+                    values= (map(int,row))
+                    self.xem.SetWireInValue(values[0],values[1],2**32-1)
+                    self.xem.UpdateWireIns()
                 elif row[-1] == '1':
-                    trigger_in.append(map(int,row))
+                    values = (map(int,row))
+                    self.xem.ActivateTriggerIn(values[0],values[1])
+    def manual_wirein(self, address, value):
+        self.xem.SetWireInValue(address,value, 2**32-1)
+        self.xem.UpdateWireIns()
+    def manual_trigger(self, address, bit):
+        self.xem.ActivateTriggerIn(address, bit)
+    def pipeout_values(self, address, bytes):
