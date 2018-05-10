@@ -46,6 +46,8 @@ def pipeout_assemble(Data, Bytes):
     Applies Opal Kelly's PipeOut read function and assembles the data
     into the appropriate array.
 
+    Parameters
+    ----------
     Data(bytearray): PipeRead data from the Opal Kelly Function
     Bytes(int): Number of Bytes in each read (4 bytes for current FPGA board)
 
@@ -55,8 +57,9 @@ def pipeout_assemble(Data, Bytes):
         -- or 32 bits of data. This corresponds to four entries of the bytearray.
         If the ReadFromPipeOut reads with different amount bytes it will need
         to be adjusted.
-
-    Returns array of assembled data
+    Returns
+    -------
+    result(list): Converted interger numbers from byte array
     """
     Buffer = bytes(Data)
     Buffer_Reverse = Buffer[::-1]
@@ -214,10 +217,20 @@ def detect_peaks(x, mph=None, mpd=1, threshold=0, edge='rising',
     return ind
 
     def determine_polarity(data):
-        """Determines if pulses have positive or negative polarity
+        """Determines if pulses have positive or negative polarity. Will not
+        work if pulse has bi-polarity. Data can contain a pulse of positive or
+        negative values.
 
+        Parameters
+        ----------
         data(list, numbers) : array of numbers representing the pulse
 
-
+        Returns
+        -------
+        0: Negative polarity
+        1: Positive polarity
         """
-        pass
+        if abs(max(data)) < abs(min(data)): #Peak is located below base line
+            return 0
+        else:
+            return 1
