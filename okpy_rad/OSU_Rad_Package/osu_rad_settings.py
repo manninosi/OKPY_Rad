@@ -75,7 +75,7 @@ ep09wire = conversion_gains[0] + conversion_gains[1]*(2**4)\
 #xem.SetWireInValue(0x09,ep09wire,2**32-1);
 # xem.UpdateWireIns()
 Data_Write.append([0x09, ep09wire, 0])
-Data_Write.append([0x40, ep07wire, 1])
+Data_Write.append([0x40, 3, 1])
 
 thefile = open('settings.txt', 'w')
 

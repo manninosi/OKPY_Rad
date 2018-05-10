@@ -23,7 +23,7 @@ class RadDevice():
     def __init__(self):
         #pass
         self.xem = ok.okCFrontPanel()
-        Bself.xem.OpenBySerial("")
+        self.xem.OpenBySerial("")
 
 
     def program_device(self):
@@ -50,7 +50,8 @@ class RadDevice():
             spamreader = csv.reader(csvfile, delimiter = ',')
             for row in spamreader:
                 if row[-1] == '0':
-                    wire_in.append(map(int,row))
+                    wire_in = (map(int,row))
+                    print wire_in
                 elif row[-1] == '1':
                     trigger_in.append(map(int,row))
         print wire_in
