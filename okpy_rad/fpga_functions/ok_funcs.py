@@ -64,3 +64,4 @@ class RadDevice(object):
     def manual_trigger(self, address, bit):
         self.xem.ActivateTriggerIn(address, bit)
     def pipeout_values(self, address, bytes):
+        pass
