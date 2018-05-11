@@ -1,1 +1,1 @@
-from fpga_functions import ok_analysis, ok_funcs
+from fpga_functions import ok_analysis
