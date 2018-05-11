@@ -21,9 +21,9 @@ class RadDevice(object):
     """
 
     def __init__(self):
+        pass
 
-        self.xem = ok.okCFrontPanel()
-        self.xem.OpenBySerial("")
+
 
 
     def program_device(self):
@@ -33,6 +33,8 @@ class RadDevice(object):
         Tkinter window for user to select Bit_File to program the FPGA. The window
         then closes and programs the FPGA. Also checks for errors.
         """
+        self.xem = ok.okCFrontPanel()
+        self.xem.OpenBySerial("")
         root = Tk()
         root.update()
         Bit_File = askopenfilename()
@@ -61,7 +63,8 @@ class RadDevice(object):
     def manual_wirein(self, address, value):
         self.xem.SetWireInValue(address,value, 2**32-1)
         self.xem.UpdateWireIns()
-    def manual_trigger(self, address, bit):
-        self.xem.ActivateTriggerIn(address, bit)
-    def pipeout_values(self, address, bytes):
-        pass
+
+    def pipeout_read(self, address, bytes):
+        Data_Buffer = bytearray('\x00'*bytes*4)#Assuming OK 4 byte read
+        self.xem.ReadFromPipeOut(address, Data_Buffer)
+        return Data_Buffer
