@@ -13,6 +13,7 @@ from tkFileDialog import askopenfilename, asksaveasfilename
 from ok_analysis import *
 import csv
 import os
+from osu_rad_settings import settings_update
 
 class RadDevice(object):
     """
@@ -22,9 +23,6 @@ class RadDevice(object):
 
     def __init__(self):
         pass
-
-
-
 
     def program_device(self):
         """
@@ -41,6 +39,17 @@ class RadDevice(object):
         root.update()
         root.destroy()
         self.xem.ConfigureFPGA(str(Bit_File))
+        return None
+
+    def update_settings_file(self, ch_num = 1, trig_thres = 200,
+     flat_time = 3, peak_time = 12, peak_gain = 0,
+     flat_gain = 0, conversion_gain = 2):
+        """Updates example settings file to change specified settings from any channel number. Must be run
+        multiple times if other parameters need to be updated for other channels.
+        """
+        settings = [ch_num, trig_thres, flat_time, peak_time, peak_gain, flat_gain, conversion_gain]
+
+        settings_update(settings)
         return None
 
     def auto_wirein(self):
@@ -60,6 +69,7 @@ class RadDevice(object):
                 elif row[-1] == '1':
                     values = (map(int,row))
                     self.xem.ActivateTriggerIn(values[0],values[1])
+
     def manual_wirein(self, address, value):
         self.xem.SetWireInValue(address,value, 2**32-1)
         self.xem.UpdateWireIns()
