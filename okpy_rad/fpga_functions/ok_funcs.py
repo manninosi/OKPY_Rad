@@ -38,7 +38,12 @@ class RadDevice(object):
         Bit_File = askopenfilename()
         root.update()
         root.destroy()
-        self.xem.ConfigureFPGA(str(Bit_File))
+        error = self.xem.ConfigureFPGA(str(Bit_File))
+        if error != 0:
+            print "Error Connecting!"
+            sys.exit()
+        else:
+            print "FPGA Connect and Programmed!"
         return None
 
     def update_settings_file(self, ch_num = 1, trig_thres = 200,
