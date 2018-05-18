@@ -43,11 +43,11 @@ class RadDevice(object):
 
     def update_settings_file(self, ch_num = 1, trig_thres = 200,
      flat_time = 3, peak_time = 12, peak_gain = 0,
-     flat_gain = 0, conversion_gain = 2):
+     flat_gain = 0, conversion_gain = 2, MCA_Time = 100):
         """Updates example settings file to change specified settings from any channel number. Must be run
         multiple times if other parameters need to be updated for other channels.
         """
-        settings = [ch_num, trig_thres, flat_time, peak_time, peak_gain, flat_gain, conversion_gain]
+        settings = [ch_num, trig_thres, flat_time, peak_time, peak_gain, flat_gain, conversion_gain, MCA_Time]
 
         settings_update(settings)
         return None
@@ -70,8 +70,8 @@ class RadDevice(object):
                     values = (map(int,row))
                     self.xem.ActivateTriggerIn(values[0],values[1])
 
-    def manual_wirein(self, address, value):
-        self.xem.SetWireInValue(address,value, 2**32-1)
+    def manual_wirein(self, address, value, mask = 2**32-1):
+        self.xem.SetWireInValue(address,value, mask)
         self.xem.UpdateWireIns()
 
     def pipeout_read(self, address, bytes):
