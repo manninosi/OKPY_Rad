@@ -2,7 +2,11 @@ from ok_funcs import RadDevice
 from ok_analysis import *
 import numpy as np
 
-class MCAHisto(RadDevice):
+class HistoMode(RadDevice):
+    """
+
+    """
+
     def __init__(self, run_mode = 2):
         self.run_mode = run_mode
         self.mca_data = []
@@ -21,9 +25,9 @@ class MCAHisto(RadDevice):
     def start_mca(self,  ch_select = 1, plot = 0):
         """Method to run MCA for FPGA and acquire all data
 
-        Plot(1 or 0):
-            1: Will update gamma spectrum as data is being data acquired
-            0: No plotting will occur
+        Plot(bool):
+            True : Will update gamma spectrum as data is being data acquired
+            False: No plotting will occur
 
         The ActivateTriggerIn addresses are currently hard coded in and should be
         manually changed if a user creates specific VHDL file. Status_out keeps
@@ -75,8 +79,10 @@ class MCAHisto(RadDevice):
         """
         if self.data_acquired == 0:
             print "Acquire MCA data before finding peaks"
+            return None
         else:
             self.peak_ind =  detect_peaks(self.mca_data, mph=mph, mpd=mpd, threshold=0, edge=edge, kpsh=kpsh, valley=valley, show=show, ax=ax)
+            return self.peak_ind
 
 
     def get_calibration(self):
@@ -98,3 +104,16 @@ class MCAHisto(RadDevice):
                 Cal_Check = raw_input('keep calibrating peaks? (Y/N)')
                 while  Cal_Point != 'Y' and Cal_Point != 'N':
                     Cal_Point = raw_input('Wrong input, please only use Y or N')
+            Cal_Points,Energies = zip(*points)
+            A = np.vstack([x_coords,np.ones(len(x_coords))]).T
+            m, c = np.linalg.lstsq(A, y_coords)[0]
+            print "Line Solution is y = {m}x + {c}".format(m=m,c=c)
+
+            Save_Q = raw_input("Save solution as pickle? (Y/N)")
+            if Save_Q == 'Y':
+                SaveName = asksaveasfilename()
+                Data = [m,c]
+                File = open(SaveName, 'wb')
+                pickle.dump(Data, File)
+                File.close()
+        return None
