@@ -16,9 +16,7 @@ import os
 from osu_rad_settings import settings_update
 
 class RadDevice(object):
-    """
-    Class to designate FPGA systems at Oregon State University to connect them
-    via the USB.
+    """Class to connect radiation detection systems with FPGAs via Opal Kelly API.
     """
 
     def __init__(self):
@@ -27,9 +25,11 @@ class RadDevice(object):
     def program_device(self):
         """
         program_device:
-        Simple function to create an object of the connected FPGA device. Opens
+        Function to create an object of the connected FPGA device. Opens
         Tkinter window for user to select Bit_File to program the FPGA. The window
-        then closes and programs the FPGA. Also checks for errors.
+        then closes and programs the FPGA. Also checks for errors during FPGA
+        programming.  
+
         """
         self.xem = ok.okCFrontPanel()
         self.xem.OpenBySerial("")
