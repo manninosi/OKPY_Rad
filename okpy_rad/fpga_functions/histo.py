@@ -1,6 +1,7 @@
 from ok_funcs import RadDevice
 from ok_analysis import *
 import numpy as np
+import matplotlib.pyplot as plt
 
 class HistoMode(RadDevice):
     """
