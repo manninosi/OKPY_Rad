@@ -2,7 +2,7 @@ from ok_funcs import RadDevice
 from ok_analysis import *
 import numpy as np
 
-class McaHisto(RadDevice):
+class MCAHisto(RadDevice):
     def __init__(self, run_mode = 2):
         self.run_mode = run_mode
         self.mca_data = []
@@ -71,14 +71,30 @@ class McaHisto(RadDevice):
         plt.pause(0.005)
 
     def find_peaks(self, mph=None, mpd=1, threshold=0, edge='rising', kpsh=False, valley=False, show=False, ax=None):
+        """Finds indices of maximum for all peaks that exceed the set threshold
+        """
         if self.data_acquired == 0:
             print "Acquire MCA data before finding peaks"
         else:
             self.peak_ind =  detect_peaks(self.mca_data, mph=mph, mpd=mpd, threshold=0, edge=edge, kpsh=kpsh, valley=valley, show=show, ax=ax)
+
+
     def get_calibration(self):
         if self.data_acquired == 0:
             print "Acquire MCA data before conducting calibration"
         else:
             Cal_Check == 'Y'
-            while Cal_Check == 'Y' and Counter
-            #Find peaks
+            Energies = []
+            Cal_Points = []
+            Counter = 0
+            while Cal_Check == 'Y' and Counter < len(self.peak_ind):
+                Keep_Point = str(raw_input('Keep peak %2.0f? (Check Spectrum)' %(Counter+1))
+                while  Keep_Point != 'Y' and Keep_Point != 'N':
+                    Keep_Point = raw_input('Wrong input, please only use Y or N')
+                if Keep_Point == 'Y':
+                    Cal_Points.append(self.peak_ind[Counter])
+                    Energies.append(raw_input('Entery Energy of peak in KeV: '))
+                Counter += 1
+                Cal_Check = raw_input('keep calibrating peaks? (Y/N)')
+                while  Cal_Point != 'Y' and Cal_Point != 'N':
+                    Cal_Point = raw_input('Wrong input, please only use Y or N')
