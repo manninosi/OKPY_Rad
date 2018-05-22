@@ -19,8 +19,8 @@ class RadDevice(object):
     """Class to connect radiation detection systems with FPGAs via Opal Kelly API.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, run_mode = 1):
+        self.run_mode = run_mode
 
     def program_device(self):
         """
@@ -28,7 +28,7 @@ class RadDevice(object):
         Function to create an object of the connected FPGA device. Opens
         Tkinter window for user to select Bit_File to program the FPGA. The window
         then closes and programs the FPGA. Also checks for errors during FPGA
-        programming.  
+        programming.
 
         """
         self.xem = ok.okCFrontPanel()
@@ -78,3 +78,13 @@ class RadDevice(object):
         Data_Buffer = bytearray('\x00'*bytes*4)#Assuming OK 4 byte read
         self.xem.ReadFromPipeOut(address, Data_Buffer)
         return Data_Buffer
+
+    
+
+    def change_run_md(self, run_mode):
+        """used to manually change the run Mode
+        WARNING: Only use if you need to change the run mode to fit your needs.
+        """
+        self.run_mode = run_mode
+        self.xem.SetWiteInValue(0,01, self.run_mode, 2**32-1)
+        self.xem.UpdateWireIns()
