@@ -14,14 +14,6 @@ class HistoMode(RadDevice):
         self.data_acquired = 0
         self.peak_ind = []
 
-    def change_run_md(self, run_mode):
-        """used to manually change the run Mode
-        WARNING: Only use if you need to change the run mode to fit
-        your needs.
-        """
-        self.run_mode = run_mode
-        self.xem.SetWiteInValue(0,01, self.run_mode, 2**32-1)
-        self.xem.UpdateWireIns()
 
     def start_mca(self,  ch_select = 1, plot = 0):
         """Method to run MCA for FPGA and acquire all data
