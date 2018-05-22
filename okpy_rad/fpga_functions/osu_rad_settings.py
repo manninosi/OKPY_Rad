@@ -20,6 +20,7 @@ def settings_update(Settings, **kwargs):
     [5]   |  Trapezoid Flat Gain
     [6]   |  Conversion Gain
     [7]   |  MCA Time
+    [8]   |  Polarity
     """
 
     Data_Write = [] #Create list for all wire data
@@ -97,6 +98,7 @@ def settings_update(Settings, **kwargs):
     # xem.UpdateWireIns()
     Data_Write.append([0x09, ep09wire, 0])
     Data_Write.append([0x40, 3, 1])
+
 
 
     with open('settings.csv', 'wb') as csvfile:
