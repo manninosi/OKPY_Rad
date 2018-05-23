@@ -26,14 +26,14 @@ def settings_update(Settings, **kwargs):
 
 
 
-    Ch_Num = Settings[0] - 1
+    Ch_Num = Settings[0]
     run_mode = 0
     gate = 0; # 0 = off, 1 = on
     time_mode = 0; # 0 = real, 1 = live
     pileup = 0; # 0 = off, 1 = on
     #xem.UpdateWireIns()
-    peaking_gain = 0; # 0-3; mult x1, x2, x4, x8
-    flat_gain = 0;    # 0-3; mult x1, x2, x4, x8
+    peaking_gain = Settings[4]; # 0-3; mult x1, x2, x4, x8
+    flat_gain = Settings[5];    # 0-3; mult x1, x2, x4, x8
     trap_gain = peaking_gain + flat_gain*2**2;
 
 
@@ -43,7 +43,10 @@ def settings_update(Settings, **kwargs):
 
     #Trigger threshold section
     trigger_thresholds = [200,200,200,200,200,200,200,200] # max 65335
-    trigger_thresholds[Ch_Num] = Settings[1]
+    count = 0
+    for i in Ch_Num:
+        trigger_thresholds[i-1] = Settings[1][count]
+        count +=1
     ep02wire = trigger_thresholds[0] + trigger_thresholds[1]*(2**16)
     ep03wire = trigger_thresholds[2] + trigger_thresholds[3]*(2**16)
     ep04wire = trigger_thresholds[4] + trigger_thresholds[5]*(2**16)
@@ -56,9 +59,15 @@ def settings_update(Settings, **kwargs):
     #xem.UpdateWireIns()
     #Trapezoidal filter section
     trap_peak = [12,12,12,12,12,12,12,12]
-    trap_peak[Ch_Num] = Settings[3]
+    count = 0
+    for i in Ch_Num:
+        trap_peak[i-1] = Settings[3][count]
+        count += 1
     trap_flat = [3,3,3,3,3,3,3,3]
-    trap_flat[Ch_Num] = Settings[2]
+    count = 0
+    for i in Ch_Num:
+        trap_flat[i-1] = Settings[2][count]
+        count += 1
 
     #Shaping parameters
     shaping_pars =\
@@ -88,7 +97,11 @@ def settings_update(Settings, **kwargs):
     # xem.SetWireInValue(0x08,ep08wire,2**32-1);
     Data_Write.append([0x08, ep08wire, 0])
     conversion_gains = [2,2,2,2,2,2,2,2]; # range 0-15
-    conversion_gains[Ch_Num] = Settings[6]
+
+    count = 0
+    for i in Ch_Num:
+        conversion_gains[i-1] = Settings[6][count]
+        count += 1
     ep09wire = conversion_gains[0] + conversion_gains[1]*(2**4)\
         + conversion_gains[2]*(2**8) + conversion_gains[3]*(2**12)\
         + conversion_gains[4]*(2**16) + conversion_gains[5]*(2**20)\

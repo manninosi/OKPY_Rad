@@ -46,11 +46,17 @@ class RadDevice(object):
             print "FPGA Connect and Programmed!"
         return None
 
-    def update_settings_file(self, ch_num = 1, trig_thres = 200,
-     flat_time = 3, peak_time = 12, peak_gain = 0,
-     flat_gain = 0, conversion_gain = 2, MCA_Time = 100):
+    def update_settings_file(self, ch_num = [1], trig_thres = [200],
+     flat_time = [3], peak_time = [12], peak_gain = 0,
+     flat_gain = 0, conversion_gain = [2], MCA_Time = 100):
         """Updates example settings file to change specified settings from any channel number. Must be run
         multiple times if other parameters need to be updated for other channels.
+
+        If multiple channels are changed, the corresponding variables need to match length and desired location:
+            trig_thres
+            flat_time
+            peak_time
+            conversion_gain
         """
         settings = [ch_num, trig_thres, flat_time, peak_time, peak_gain, flat_gain, conversion_gain, MCA_Time]
 
@@ -79,12 +85,18 @@ class RadDevice(object):
         self.xem.SetWireInValue(address,value, mask)
         self.xem.UpdateWireIns()
 
-    def pipeout_read(self, address, bytes):
-        Data_Buffer = bytearray('\x00'*bytes*4)#Assuming OK 4 byte read
-        self.xem.ReadFromPipeOut(address, Data_Buffer)
-        return Data_Buffer
+    def pipeout_read(self, address, chunks):
+        """Conducts Pipe Read from OK and specified address.
 
-    
+        Address(hex or int): Pipe out address
+        chunks(int): Number of 32-bit chunks to be read
+        """
+        Data_Buffer = bytearray('\x00'*chunks*4)#Assuming OK 4 byte read
+        self.xem.ReadFromPipeOut(address, Data_Buffer)
+        Result = pipeout_assemble(Data_Buffer, 4)
+        return Result
+
+
 
     def change_run_md(self, run_mode):
         """used to manually change the run Mode
