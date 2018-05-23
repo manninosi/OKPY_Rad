@@ -19,6 +19,7 @@ def settings_update(Settings, **kwargs):
     [4]   |  Trapezoid Peak Gain
     [5]   |  Trapezoid Flat Gain
     [6]   |  Conversion Gain
+    [7]   |  MCA Time
     """
 
     Data_Write = [] #Create list for all wire data
@@ -80,7 +81,7 @@ def settings_update(Settings, **kwargs):
     Data_Write.append([0x00, trap_gain*(2**10), 2*32-1])
 
 
-    mca_time = 100; # in s, down to ~0.01s
+    mca_time = Settings[7] # in s, down to ~0.01s
     ct_lsb = 2**17*8E-9; # position of time inside FPGA * sys_clk period in sec
     collection_time = int(round(mca_time/ct_lsb));
     ep08wire = collection_time;

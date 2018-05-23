@@ -16,20 +16,20 @@ import os
 from osu_rad_settings import settings_update
 
 class RadDevice(object):
-    """
-    Class to designate FPGA systems at Oregon State University to connect them
-    via the USB.
+    """Class to connect radiation detection systems with FPGAs via Opal Kelly API.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, run_mode = 1):
+        self.run_mode = run_mode
 
     def program_device(self):
         """
         program_device:
-        Simple function to create an object of the connected FPGA device. Opens
+        Function to create an object of the connected FPGA device. Opens
         Tkinter window for user to select Bit_File to program the FPGA. The window
-        then closes and programs the FPGA. Also checks for errors.
+        then closes and programs the FPGA. Also checks for errors during FPGA
+        programming.
+
         """
         self.xem = ok.okCFrontPanel()
         self.xem.OpenBySerial("")
@@ -48,11 +48,11 @@ class RadDevice(object):
 
     def update_settings_file(self, ch_num = 1, trig_thres = 200,
      flat_time = 3, peak_time = 12, peak_gain = 0,
-     flat_gain = 0, conversion_gain = 2):
+     flat_gain = 0, conversion_gain = 2, MCA_Time = 100):
         """Updates example settings file to change specified settings from any channel number. Must be run
         multiple times if other parameters need to be updated for other channels.
         """
-        settings = [ch_num, trig_thres, flat_time, peak_time, peak_gain, flat_gain, conversion_gain]
+        settings = [ch_num, trig_thres, flat_time, peak_time, peak_gain, flat_gain, conversion_gain, MCA_Time]
 
         settings_update(settings)
         return None
@@ -75,11 +75,21 @@ class RadDevice(object):
                     values = (map(int,row))
                     self.xem.ActivateTriggerIn(values[0],values[1])
 
-    def manual_wirein(self, address, value):
-        self.xem.SetWireInValue(address,value, 2**32-1)
+    def manual_wirein(self, address, value, mask = 2**32-1):
+        self.xem.SetWireInValue(address,value, mask)
         self.xem.UpdateWireIns()
 
     def pipeout_read(self, address, bytes):
         Data_Buffer = bytearray('\x00'*bytes*4)#Assuming OK 4 byte read
         self.xem.ReadFromPipeOut(address, Data_Buffer)
         return Data_Buffer
+
+    
+
+    def change_run_md(self, run_mode):
+        """used to manually change the run Mode
+        WARNING: Only use if you need to change the run mode to fit your needs.
+        """
+        self.run_mode = run_mode
+        self.xem.SetWiteInValue(0,01, self.run_mode, 2**32-1)
+        self.xem.UpdateWireIns()
