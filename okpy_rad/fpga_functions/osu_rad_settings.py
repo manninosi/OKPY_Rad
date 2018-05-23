@@ -12,7 +12,7 @@ def settings_update(Settings, **kwargs):
     Each item in the Settings list is a specific variable
     ###########################
     Index |  Settings Variable
-    [0]   |  Channel Number
+    [0]   |  Channel Number(s)
     [1]   |  Trigger Threshold
     [2]   |  Flat Time
     [3]   |  Peaking Time
@@ -20,6 +20,10 @@ def settings_update(Settings, **kwargs):
     [5]   |  Trapezoid Flat Gain
     [6]   |  Conversion Gain
     [7]   |  MCA Time
+    [8]   |  Polarity Inversion
+    [9]   |  Coincidence Window
+    [10]  |  Delay
+    [11]  |  Record Single Events
     """
 
     Data_Write = [] #Create list for all wire data
@@ -35,9 +39,9 @@ def settings_update(Settings, **kwargs):
     peaking_gain = Settings[4]; # 0-3; mult x1, x2, x4, x8
     flat_gain = Settings[5];    # 0-3; mult x1, x2, x4, x8
     trap_gain = peaking_gain + flat_gain*2**2;
+    Scope_Samples = 2**11 - 1
 
-
-    ep01wire = run_mode + gate*(2**3) + time_mode*(2**5) + pileup*(2**6) + trap_gain*(2**10);
+    ep01wire = run_mode + gate*(2**3) + time_mode*(2**5) + pileup*(2**6) + trap_gain*(2**10) + Scope_Samples * (2**15);
     Data_Write.append([0x01, ep01wire, 0])
 
 
@@ -111,6 +115,13 @@ def settings_update(Settings, **kwargs):
     Data_Write.append([0x09, ep09wire, 0])
     Data_Write.append([0x40, 3, 1])
 
+    #Coincidence Mode Settings
+    pol = int(Settings[8], 2)
+    coincidence_window = Settings[9]
+    scope_data_delay = Settings[10]
+    rec_sing = Settings[11]
+
+    ep0Ewire = coincidence_window + pol*(2^12) + scope_data_delay*(2^20)+rec_sing*(2^31);
 
     with open('settings.csv', 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter= ',')
