@@ -10,9 +10,6 @@ connected to a PC.
 import numpy as np
 
 
-#Here is  Change
-
-
 
 def bit_chop(Data, msb, lsb, Total_Bits):
     """

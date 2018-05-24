@@ -26,4 +26,5 @@ class CoinMode(RadDevice):
     def run_coin_meas(self):
         pass
 
+    .
     
