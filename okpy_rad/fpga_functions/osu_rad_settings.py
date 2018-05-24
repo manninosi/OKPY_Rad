@@ -12,7 +12,7 @@ def settings_update(Settings, **kwargs):
     Each item in the Settings list is a specific variable
     ###########################
     Index |  Settings Variable
-    [0]   |  Channel Number
+    [0]   |  Channel Number(s)
     [1]   |  Trigger Threshold
     [2]   |  Flat Time
     [3]   |  Peaking Time
@@ -20,31 +20,37 @@ def settings_update(Settings, **kwargs):
     [5]   |  Trapezoid Flat Gain
     [6]   |  Conversion Gain
     [7]   |  MCA Time
-    [8]   |  Polarity
+    [8]   |  Polarity Inversion
+    [9]   |  Coincidence Window
+    [10]  |  Delay
+    [11]  |  Record Single Events
     """
 
     Data_Write = [] #Create list for all wire data
 
 
 
-    Ch_Num = Settings[0] - 1
+    Ch_Num = Settings[0]
     run_mode = 0
     gate = 0; # 0 = off, 1 = on
     time_mode = 0; # 0 = real, 1 = live
     pileup = 0; # 0 = off, 1 = on
     #xem.UpdateWireIns()
-    peaking_gain = 0; # 0-3; mult x1, x2, x4, x8
-    flat_gain = 0;    # 0-3; mult x1, x2, x4, x8
+    peaking_gain = Settings[4]; # 0-3; mult x1, x2, x4, x8
+    flat_gain = Settings[5];    # 0-3; mult x1, x2, x4, x8
     trap_gain = peaking_gain + flat_gain*2**2;
+    Scope_Samples = 2**11 - 1
 
-
-    ep01wire = run_mode + gate*(2**3) + time_mode*(2**5) + pileup*(2**6) + trap_gain*(2**10);
+    ep01wire = run_mode + gate*(2**3) + time_mode*(2**5) + pileup*(2**6) + trap_gain*(2**10) + Scope_Samples * (2**15);
     Data_Write.append([0x01, ep01wire, 0])
 
 
     #Trigger threshold section
     trigger_thresholds = [200,200,200,200,200,200,200,200] # max 65335
-    trigger_thresholds[Ch_Num] = Settings[1]
+    count = 0
+    for i in Ch_Num:
+        trigger_thresholds[i-1] = Settings[1][count]
+        count +=1
     ep02wire = trigger_thresholds[0] + trigger_thresholds[1]*(2**16)
     ep03wire = trigger_thresholds[2] + trigger_thresholds[3]*(2**16)
     ep04wire = trigger_thresholds[4] + trigger_thresholds[5]*(2**16)
@@ -57,9 +63,15 @@ def settings_update(Settings, **kwargs):
     #xem.UpdateWireIns()
     #Trapezoidal filter section
     trap_peak = [12,12,12,12,12,12,12,12]
-    trap_peak[Ch_Num] = Settings[3]
+    count = 0
+    for i in Ch_Num:
+        trap_peak[i-1] = Settings[3][count]
+        count += 1
     trap_flat = [3,3,3,3,3,3,3,3]
-    trap_flat[Ch_Num] = Settings[2]
+    count = 0
+    for i in Ch_Num:
+        trap_flat[i-1] = Settings[2][count]
+        count += 1
 
     #Shaping parameters
     shaping_pars =\
@@ -89,7 +101,11 @@ def settings_update(Settings, **kwargs):
     # xem.SetWireInValue(0x08,ep08wire,2**32-1);
     Data_Write.append([0x08, ep08wire, 0])
     conversion_gains = [2,2,2,2,2,2,2,2]; # range 0-15
-    conversion_gains[Ch_Num] = Settings[6]
+
+    count = 0
+    for i in Ch_Num:
+        conversion_gains[i-1] = Settings[6][count]
+        count += 1
     ep09wire = conversion_gains[0] + conversion_gains[1]*(2**4)\
         + conversion_gains[2]*(2**8) + conversion_gains[3]*(2**12)\
         + conversion_gains[4]*(2**16) + conversion_gains[5]*(2**20)\
@@ -99,6 +115,13 @@ def settings_update(Settings, **kwargs):
     Data_Write.append([0x09, ep09wire, 0])
     Data_Write.append([0x40, 3, 1])
 
+    #Coincidence Mode Settings
+    pol = int(Settings[8], 2)
+    coincidence_window = Settings[9]
+    scope_data_delay = Settings[10]
+    rec_sing = Settings[11]
+
+    ep0Ewire = coincidence_window + pol*(2^12) + scope_data_delay*(2^20)+rec_sing*(2^31);
 
 
     with open('settings.csv', 'wb') as csvfile:
