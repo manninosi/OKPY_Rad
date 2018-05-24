@@ -7,24 +7,27 @@ import matplotlib.pyplot as plt
 class CoinMode(RadDevice):
     """Class to set-up coincidence mode for radiation detection with FPGAs.
 
+    Coincidence window, channels
     WARNING: Some methods have hardcoded addresses for WireIns
 
     """
 
-    def __init__(self, run_mode = 3):
+    def __init__(self, run_mode = 3, ch_to_examine = [1,3,5,6]):
         self.run_mode = run_mode
-        self.mca_data = []
-        self.data_acquired = 0
+        self.ch_to_examine = ch_to_examine
         self.peak_ind = []
 
-    def set_pattern(self, pattern = '00000000'):
+    def set_ch_to_examine(self, ch_to_examine):
+        """Updates list for channels to examine for coincidence
+        """
+        self.ch_to_examine = ch_to_examine
+
+
+    def run_coin_meas_energy(self):
         pass
 
-    def set_coin_window(self, coin_window = 100 , address = 0x0E):
+    def run_coin_meas_pulse(self):
         pass
 
-    def run_coin_meas(self):
+    def plot_coin_data(self, data):
         pass
-
-    .
-    
