@@ -99,6 +99,13 @@ class RadDevice(object):
         return Result
 
 
+    def get_energy(self, data, pkt = 100, flt = 400):
+        """Perfroms convolution with a trapezoidal filter
+        data(array): Contains raw pulse data
+        pkt(int): Peaking time for trapezoidal filter
+        flt(int): Flat top time for trapezoidal filter
+        """
+        filter = np.concatenate((np.ones(pkt), np.zeros(flt), np.ones(pkt)/-1))
 
     def change_run_mode(self, run_mode):
         """used to manually change the run Mode
