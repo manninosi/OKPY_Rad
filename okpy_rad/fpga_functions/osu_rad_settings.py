@@ -122,6 +122,7 @@ def settings_update(Settings, **kwargs):
     rec_sing = Settings[11]
 
     ep0Ewire = coincidence_window + pol*(2^12) + scope_data_delay*(2^20)+rec_sing*(2^31);
+    Data_Write.append([0x0E, ep0Ewire, 0])
 
     with open('settings.csv', 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter= ',')
