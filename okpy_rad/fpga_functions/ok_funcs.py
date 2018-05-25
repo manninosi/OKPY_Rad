@@ -100,7 +100,7 @@ class RadDevice(object):
 
 
 
-    def change_run_md(self, run_mode):
+    def change_run_mode(self, run_mode):
         """used to manually change the run Mode
         WARNING: Only use if you need to change the run mode to fit your needs.
         """

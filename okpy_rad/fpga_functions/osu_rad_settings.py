@@ -39,9 +39,9 @@ def settings_update(Settings, **kwargs):
     peaking_gain = Settings[4]; # 0-3; mult x1, x2, x4, x8
     flat_gain = Settings[5];    # 0-3; mult x1, x2, x4, x8
     trap_gain = peaking_gain + flat_gain*2**2;
-    Scope_Samples = 2**11 - 1
+    Scope_Samples = 2**12
 
-    ep01wire = run_mode + gate*(2**3) + time_mode*(2**5) + pileup*(2**6) + trap_gain*(2**10) + Scope_Samples * (2**15);
+    ep01wire = run_mode + gate*(2**3) + time_mode*(2**5) + pileup*(2**6) + trap_gain*(2**10) + (Scope_Samples-1) * (2**15)
     Data_Write.append([0x01, ep01wire, 0])
 
 
