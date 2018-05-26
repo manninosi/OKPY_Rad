@@ -37,10 +37,10 @@ class ScopeMode(RadDevice):
         Buff_osc = bytearray(self.scope_samples*4)
         self.xem.ReadFromPipeOut(ch_select+160, Buff_osc)
         Pulse = pipeout_assemble(Buff_osc, 4)
-            osc_values = []
-            for i in range(len(Pulse)):
-                osc_values.append(bit_chop(Pulse[i], 13, 0, 32))
-            self.pulse_data.append(osc_values)        #Set mode back to "stop"
+        osc_values = []
+        for i in range(len(Pulse)):
+            osc_values.append(bit_chop(Pulse[i], 13, 0, 32))
+        self.pulse_data.append(osc_values)        #Set mode back to "stop"
         self.xem.SetWireInValue(0x01, 0, 2**3-1)
         self.xem.UpdateWireIns()
         return Pulse

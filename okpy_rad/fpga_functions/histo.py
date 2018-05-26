@@ -13,9 +13,12 @@ class HistoMode(RadDevice):
         self.mca_data = []
         self.data_acquired = 0
         self.peak_ind = []
+        #Making plotting object
+        self.make_figure = plt.figure()
+        self.ax = self.make_figure.add_subplot(111)#Creates figure object
+        self.line1, = self.ax.plot([],  [])
 
-
-    def start_mca(self,  ch_select = 1, plot = 0):
+    def start_mca(self,  ch_select = 1, plot = 1):
         """Method to run MCA for FPGA and acquire all data
 
         Plot(bool):
@@ -27,44 +30,44 @@ class HistoMode(RadDevice):
         track if the MCA state machine is completed and also has a hard coded
         address.
         """
-        MCA_done = 0
+        #MCA_done = 0
         #Set FPGA to MCA mode
         ep01wire = self.run_mode
         self.xem.SetWireInValue(0x01, ep01wire, 2**3-1)
 
         if self.run_mode == 2:
-            self.xem.ActivateTriggerIn(0x41, 1) #Host Reset
+            #self.xem.ActivateTriggerIn(0x41, 1) #Host Reset
             self.xem.ActivateTriggerIn(0x40, 1) #Start Trigger for State machine
             self.xem.UpdateWireOuts()
-            status_out = bit_chop(self.xem.GetWireOutValue(0x21)) #Rea
+            status_out = self.xem.GetWireOutValue(0x21) #Ra
             MCA_done = bit_chop(status_out, ch_select +8, ch_select+8, 32)
             while MCA_done != 1:
-                status_out =self.xem.GetWireOutValue(33)
+                self.xem.UpdateWireOuts()
+                status_out =self.xem.GetWireOutValue(0x21)
                 MCA_done = bit_chop(status_out, ch_select+8, ch_select+8, 32)
-                Buf_Data = bytearray('\x00'*4096*4)
+                Buf_Data = bytearray(4096*4)
                 self.xem.ReadFromPipeOut(ch_select+176, Buf_Data)
-                self.mca_data = Pipeout_Assemble(Buf_Data, 4)
+                self.mca_data = pipeout_assemble(Buf_Data, 4)
+                print self.mca_data[20:40]
 
                 if plot == 1:
-                    print "Updating Gamma Spectrum"
+                    #print "Updating Gamma Spectrum"
                     self.plot_mca(self.mca_data)
             self.data_acquired = 1
         else:
             print "Run Mode is not set to 2 for MCA"#MCA run mode is 2
             #Consider adding function to change mode
+        print "Histogram Run Complete."
 
     def plot_mca(self, data):
         """Takes in MCA_data and plots the spectrum
         """
         plt.ion()
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        line1, = ax.plot(x,  y)
-        ax.set_ylim(min(data) - 10, max(data) + 10)
-        ax.set_xlim(left = -10, right = 6000)
-        line1.set_xdata(range(len(data)))
-        line1.set_ydata(data)
-        fig.canvas.draw()
+        self.ax.set_ylim(min(data) - 10, max(data) + 10)
+        self.ax.set_xlim(left = -10, right = 6000)
+        self.line1.set_xdata(range(len(data)))
+        self.line1.set_ydata(data)
+        self.make_figure.canvas.draw()
         plt.pause(0.005)
 
     def find_peaks(self, mph=None, mpd=1, threshold=0, edge='rising', kpsh=False, valley=False, show=False, ax=None):
@@ -87,8 +90,8 @@ class HistoMode(RadDevice):
             Cal_Points = []
             Counter = 0
             while Cal_Check == 'Y' and Counter < len(self.peak_ind):
-                Keep_Point = str(raw_input('Keep peak %2.0f? (Check Spectrum)' %(Counter+1))
-                while  Keep_Point != 'Y' and Keep_Point != 'N':
+                Keep_Point = str(raw_input('Keep peak %2.0f? (Check Spectrum)' %(Counter+1)))
+                while Keep_Point != 'Y' and Keep_Point != 'N':
                     Keep_Point = raw_input('Wrong input, please only use Y or N')
                 if Keep_Point == 'Y':
                     Cal_Points.append(self.peak_ind[Counter])
