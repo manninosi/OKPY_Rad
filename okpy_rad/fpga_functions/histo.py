@@ -34,22 +34,24 @@ class HistoMode(RadDevice):
         #Set FPGA to MCA mode
         ep01wire = self.run_mode
         self.xem.SetWireInValue(0x01, ep01wire, 2**3-1)
+        self.xem.UpdateWireIns()
 
         if self.run_mode == 2:
-            #self.xem.ActivateTriggerIn(0x41, 1) #Host Reset
+            self.xem.ActivateTriggerIn(0x41, 1) #Host Reset
             self.xem.ActivateTriggerIn(0x40, 1) #Start Trigger for State machine
             self.xem.UpdateWireOuts()
-            status_out = self.xem.GetWireOutValue(0x21) #Ra
-            MCA_done = bit_chop(status_out, ch_select +8, ch_select+8, 32)
+            status_out = self.xem.GetWireOutValue(0x21)
+            MCA_done = bit_chop(status_out, ch_select +7, ch_select+7, 32)
             while MCA_done != 1:
                 self.xem.UpdateWireOuts()
                 status_out =self.xem.GetWireOutValue(0x21)
-                MCA_done = bit_chop(status_out, ch_select+8, ch_select+8, 32)
-                Buf_Data = bytearray(4096*4)
+                MCA_done = bit_chop(status_out, ch_select+7, ch_select+7, 32)
+                #print bin(bit_chop(status_out, 31, 0, 32))[2:]
+                Buf_Data = bytearray('\x00'*4096*4)
                 self.xem.ReadFromPipeOut(ch_select+176, Buf_Data)
                 self.mca_data = pipeout_assemble(Buf_Data, 4)
-                print self.mca_data[20:40]
 
+                self.xem.ActivateTriggerIn(0x41, 2)#Update Times
                 if plot == 1:
                     #print "Updating Gamma Spectrum"
                     self.plot_mca(self.mca_data)
