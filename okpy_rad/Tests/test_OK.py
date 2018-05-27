@@ -57,7 +57,7 @@ def create_byte_array_hex(array_length):
         while len(Value_Array_Str[i]) < 32:#Keep adding '0' bits till it is 32 bits long
             Value_Array_Str[i] = '0' + str(Value_Array_Str[i])
         for q in range(4):
-            Data.append(int(Value_Array_Str[i][(q*8):8+(q*8)],2))
+            Data.append(int(Value_Array_Str[i][(q*8):8+(q*8)],2)) #Appends values as byte format
     print Data
     return Value_Array_Str, Data[::-1]
 
