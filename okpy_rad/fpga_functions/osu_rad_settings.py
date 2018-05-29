@@ -88,9 +88,7 @@ def settings_update(Settings, **kwargs):
     Data_Write.append([0x07, ep07wire, 0])
 
 
-    peaking_gain = Settings[4]; # 0-3; mult x1, x2, x4, x8
-    flat_gain = Settings[5];    # 0-3; mult x1, x2, x4, x8
-    trap_gain = peaking_gain + flat_gain*2**2
+
     #Data_Write.append([0x00, trap_gain*(2**10), 2*32-1])
 
 
@@ -100,7 +98,7 @@ def settings_update(Settings, **kwargs):
     ep08wire = collection_time;
     # xem.SetWireInValue(0x08,ep08wire,2**32-1);
     Data_Write.append([0x08, ep08wire, 0])
-    conversion_gains = [2,2,2,2,2,2,2,2]; # range 0-15
+    conversion_gains = [7,7,7,7,7,7,7,7]; # range 0-15
 
     count = 0
     for i in Ch_Num:

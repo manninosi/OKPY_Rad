@@ -47,7 +47,7 @@ class HistoMode(RadDevice):
                 status_out =self.xem.GetWireOutValue(0x21)
                 MCA_done = bit_chop(status_out, ch_select+7, ch_select+7, 32)
                 #print bin(bit_chop(status_out, 31, 0, 32))[2:]
-                Buf_Data = bytearray('\x00'*4096*4)
+                Buf_Data = bytearray(4096*4)
                 self.xem.ReadFromPipeOut(ch_select+176, Buf_Data)
                 self.mca_data = pipeout_assemble(Buf_Data, 4)
 
