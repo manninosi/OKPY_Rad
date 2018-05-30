@@ -2,12 +2,18 @@ from ok_funcs import RadDevice
 from ok_analysis import *
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
 
 class ListoMode(RadDevice):
 
-    def __init__(self, run_mode = 5, ch_select):
+    def __init__(self, run_mode = 5, ch_select=1):
         self.run_mode = run_mode
         self.ch_select= ch_select
+
+        #Making plotting object
+        self.make_figure = plt.figure()
+        self.ax = self.make_figure.gca(project='3d')#Creates figure object
+
 
     def set_intervals(self, intvl = 1, cycle = 60, address = 0x0C):
         ep0Cwire = intvl + List_Cycle*(2**4)
@@ -20,6 +26,10 @@ class ListoMode(RadDevice):
 
         Make sure to run the "set_intervals" method before executing "run_listo"
         """
+        #Set FPGA to MCA mode
+        ep01wire = self.run_mode
+        self.xem.SetWireInValue(0x01, ep01wire, 2**3-1)
+        self.xem.UpdateWireIns()
         #Start Listogram statemachine
         self.xem.ActivateTriggerIn(0x40, 1)
         #Checks to see if MCA_done is complete
@@ -48,15 +58,36 @@ class ListoMode(RadDevice):
         listo_data = np.array(listo_data)
         print "There are %3.0f intervals in this data" %(len(listo_data))
 
-        Interval_Comb = input("Enter the number of seconds to combine listogram data: ")
-        Interval_Tot = len(listo_data)/Interval_Comb #Will determin how many iterations to combine data
+        self.Interval_Comb = input("Enter the number of seconds to combine listogram data: ")
+        self.Interval_Tot = len(listo_data)/Interval_Comb #Will determin how many iterations to combine data
 
         Combined_Data = []
-        for i in range(Interval_Tot):
-            Combined_Data.append(Temporal_Data[i*Interval_Comb:(i*Interval_Comb)+Interval_Comb].sum(axis=0))
-        Combined_Data.append(Temporal_Data[i*Interval_Comb:(i*Interval_Comb)+len(listo_data)%Interval_Comb].sum(axis=0))
+        for i in range(self.Interval_Tot):
+            Combined_Data.append(Temporal_Data[i*self.Interval_Comb:(i*Interval_Comb)+self.Interval_Comb].sum(axis=0))
+        Combined_Data.append(Temporal_Data[i*self.Interval_Comb:(i*self.Interval_Comb)+len(listo_data)%self.Interval_Comb].sum(axis=0))
 
         return Combined_Data
 
     def plot_listo_data(self, listo_data):
-        pass
+        Time_Plot = []
+        #Create time array for 3D plot
+        for i in range(1, 1+self.Interval_Tot):
+            Time_Plot.append(self.Interval_Comb*i)
+
+        zs = Time_Plot
+        verts = []
+        #Create tuples for 3D plot
+        for i in range(len(zs)):
+            verts.append(list(zip(range(listo_data[i]), listo_data[i])))
+
+        poly = LineCollection(verts)
+        self.ax.add_collection3d(poly, zs=zs, zdir='y')
+
+        self.ax.set_xlabel('Channel(#)', fontsize = 15)
+        self.ax.set_xlim3d(-5, max(range(listo_data[0])) + 5)
+        self.ax.set_ylabel('Time(secs)', fontsize = 15)
+        self.ax.set_ylim3d(0, max(Time_Plot))
+        self.ax.set_zlabel('Counts', fontsize = 15)
+        self.ax.set_zlim3d(0,max(listo_data[0]))
+        self.ax.set_title("Listogram Data",y = 1.08)
+        plt.show()
