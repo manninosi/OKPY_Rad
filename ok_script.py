@@ -1,6 +1,7 @@
 from okpy_rad.fpga_functions.ok_funcs import *
 from okpy_rad.fpga_functions.scope    import *
 from okpy_rad.fpga_functions.histo    import *
+from okpy_rad.fpga_functions.listo    import *
 
 device = ScopeMode()#Create scope object
 
