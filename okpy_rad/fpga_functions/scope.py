@@ -45,7 +45,7 @@ class ScopeMode(RadDevice):
         self.xem.UpdateWireIns()
         return Pulse
 
-    def get_pulse_data(self, num_pulses = 1000, plot = 1, ch_select = 5):
+    def get_pulse_data(self, num_pulses = 100, plot = 1, ch_select = 5):
         """Continuous pulse data that can be plotted
         num_pulses(int): How many pulses to plot
         plot(bool):
@@ -92,7 +92,7 @@ class ScopeMode(RadDevice):
         self.xem.SetWireInValue(0x01, 0, 2**3-1)
         self.xem.UpdateWireIns()
         print "Scope Measurement Complete"
-        return Pulse
+        return self.pulse_data
 
     def plot_pulse(self, pulse_data, max, min):
         plt.ion()

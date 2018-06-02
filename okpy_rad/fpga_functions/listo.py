@@ -6,6 +6,8 @@ from matplotlib.collections import LineCollection
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from matplotlib.backends.backend_pdf import PdfPages
+
 
 class ListoMode(RadDevice):
 
@@ -52,11 +54,14 @@ class ListoMode(RadDevice):
             self.xem.UpdateWireOuts()
             status_out = self.xem.GetWireOutValue(33)
             MCA_done = bit_chop(status_out,ch_select+7,ch_select+7,32)
+            count = 1
             if start_mca_read == 1:
                 Buf_Data = bytearray(4*4096)
                 self.xem.ReadFromPipeOut(176 + ch_select, Buf_Data)
                 print sum(pipeout_assemble(Buf_Data,4))
                 listo_data.append(pipeout_assemble(Buf_Data,4))
+                print "The current interval is: %3.0f" %count
+                count += 1
         return listo_data
 
     def coarsen_listo_data(self, listo_data):
@@ -75,7 +80,7 @@ class ListoMode(RadDevice):
 
         return Combined_Data
 
-    def plot_listo_data(self, listo_data):
+    def plot_listo_data(self, listo_data, save_pdf = 0):
         Time_Plot = []
         #Create time array for 3D plot
         for i in range(1, 1+self.Interval_Tot):
@@ -97,4 +102,9 @@ class ListoMode(RadDevice):
         self.ax.set_zlabel('Counts', fontsize = 15)
         self.ax.set_zlim3d(0,max(listo_data[0]))
         self.ax.set_title("Listogram Data",y = 1.08)
+        if save_pdf == 1:
+            file_name = input("Enter file name to save PDF image: ")
+            pp = PdfPages('multipage.pdf')
+            plt.savefig(pp, format='pdf')
+            pp.close()
         plt.show()
