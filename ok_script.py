@@ -124,16 +124,15 @@ LISTOGRAM SCRIPT
 """
 
 
-# device = ListoMode() #Create histogram object
-# device.program_device()
-#
-# device.update_settings_file( ch_num = [5], trig_thres = [200],
-#  flat_time = [3], peak_time = [12], peak_gain = 0,
-#  flat_gain = 0, conversion_gain = [8], MCA_Time = 60, pol = '00000101',
-#  coin_window = 100, data_delay = 400, rec_sing = 0)
-# device.auto_wirein()
-# device.set_intervals()
-# list_data = device.run_listo(ch_select = 5)
-# print len(list_data)
-# coarsen_data = device.coarsen_listo_data(list_data)
-# device.plot_listo_data(coarsen_data)
+device = ListoMode() #Create histogram object
+device.program_device()
+
+device.update_settings_file( ch_num = [5], trig_thres = [200],
+ flat_time = [3], peak_time = [12], peak_gain = 0,
+ flat_gain = 0, conversion_gain = [8], MCA_Time = 60, pol = '00000101',
+ coin_window = 100, data_delay = 400, rec_sing = 0)
+device.auto_wirein()
+device.set_intervals(intvl = 1, cycle = 60)
+list_data = device.run_listo(ch_select = 5)
+coarsen_data = device.coarsen_listo_data(list_data)
+device.plot_listo_data(coarsen_data, save_pdf = 1)

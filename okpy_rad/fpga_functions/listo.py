@@ -45,6 +45,7 @@ class ListoMode(RadDevice):
         MCA_done = bit_chop(status_out,ch_select+7,ch_select+7,32)
         #Array to hold Listogram Data
         listo_data = []
+        count = 1
         while MCA_done != 1:
 
             self.xem.UpdateTriggerOuts()
@@ -54,7 +55,7 @@ class ListoMode(RadDevice):
             self.xem.UpdateWireOuts()
             status_out = self.xem.GetWireOutValue(33)
             MCA_done = bit_chop(status_out,ch_select+7,ch_select+7,32)
-            count = 1
+
             if start_mca_read == 1:
                 Buf_Data = bytearray(4*4096)
                 self.xem.ReadFromPipeOut(176 + ch_select, Buf_Data)
@@ -103,8 +104,8 @@ class ListoMode(RadDevice):
         self.ax.set_zlim3d(0,max(listo_data[0]))
         self.ax.set_title("Listogram Data",y = 1.08)
         if save_pdf == 1:
-            file_name = input("Enter file name to save PDF image: ")
-            pp = PdfPages('multipage.pdf')
+            file_name = raw_input("Enter file name to save PDF image: ")
+            pp = PdfPages(file_name)
             plt.savefig(pp, format='pdf')
             pp.close()
         plt.show()
