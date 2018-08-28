@@ -49,7 +49,7 @@ class RadDevice(object):
     def update_settings_file(self, ch_num = [1], trig_thres = [200],
      flat_time = [3], peak_time = [12], peak_gain = 0,
      flat_gain = 0, conversion_gain = [2], MCA_Time = 100, pol = '00000101',
-     coin_window = 100, data_delay = 400, rec_sing = 0):
+     coin_window = 100, data_delay = 400, rec_sing = 0, trig_flat = [3], trig_peak = [12]):
         """Updates example settings file to change specified settings from any channel number. Must be run
         multiple times if other parameters need to be updated for other channels.
 
@@ -60,7 +60,7 @@ class RadDevice(object):
             conversion_gain
         """
         settings = [ch_num, trig_thres, flat_time, peak_time, peak_gain, flat_gain, conversion_gain, MCA_Time, pol, coin_window,
-        data_delay, rec_sing]
+        data_delay, rec_sing, trig_flat, trig_peak]
 
         settings_update(settings)
         return None

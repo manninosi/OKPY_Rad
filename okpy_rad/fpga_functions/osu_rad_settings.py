@@ -14,8 +14,8 @@ def settings_update(Settings, **kwargs):
     Index |  Settings Variable
     [0]   |  Channel Number(s)
     [1]   |  Trigger Threshold
-    [2]   |  Flat Time
-    [3]   |  Peaking Time
+    [2]   |  Trapezoid Flat Time
+    [3]   |  Trapezoid Peaking Time
     [4]   |  Trapezoid Peak Gain
     [5]   |  Trapezoid Flat Gain
     [6]   |  Conversion Gain
@@ -24,6 +24,8 @@ def settings_update(Settings, **kwargs):
     [9]   |  Coincidence Window
     [10]  |  Delay
     [11]  |  Record Single Events
+    [12]  |  Trigger Flat time
+    [13]  |  Trigger Peak Time
     """
 
     Data_Write = [] #Create list for all wire data
@@ -87,7 +89,30 @@ def settings_update(Settings, **kwargs):
     Data_Write.append([0x06, ep06wire, 0])
     Data_Write.append([0x07, ep07wire, 0])
 
+    trig_peak = [12,12,12,12,12,12,12,12]
+    count = 0
+    for i in Ch_Num:
+        trig_peak[i-1] = Settings[13][count]
+        count += 1
+    trig_flat = [3,3,3,3,3,3,3,3]
+    count = 0
+    for i in Ch_Num:
+        trig_flat[i-1] = Settings[12][count]
+        count += 1
 
+    #Shaping parameters
+    trig_shaping_pars =\
+       [trig_peak[0]+trig_flat[0]*(2**4),trig_peak[1]+trig_flat[1]*(2**4),\
+       trig_peak[2]+trig_flat[2]*(2**4),trig_peak[3]+trig_flat[3]*(2**4),\
+       trig_peak[4]+trig_flat[4]*(2**4),trig_peak[5]+trig_flat[5]*(2**4),\
+       trig_peak[6]+trig_flat[6]*(2**4),trig_peak[7]+trig_flat[7]*(2**4)]
+    ep0Fwire = trig_shaping_pars[0] + trig_shaping_pars[1]*(2**8)\
+       + trig_shaping_pars[2]*(2**16) + trig_shaping_pars[3]*(2**24);
+    ep15wire = trig_shaping_pars[4] + trig_shaping_pars[5]*(2**8)\
+       + trig_shaping_pars[6]*(2**16) + shaping_pars[7]*(2**24);
+
+    Data_Write.append([0x0F, ep0Fwire, 0])
+    Data_Write.append([0x15, ep15wire, 0])
 
     #Data_Write.append([0x00, trap_gain*(2**10), 2*32-1])
 
