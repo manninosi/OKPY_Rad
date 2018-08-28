@@ -9,7 +9,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import csv
 #pp = PdfPages('multipage.pdf')
 
-#
+
 # device = ScopeMode()#Create scope object
 #
 # device.program_device()
@@ -21,7 +21,7 @@ import csv
 # device.auto_wirein()
 # device.update_settings_file()
 # pulse_data = device.get_pulse_data(ch_select = 5, num_pulses=500, plot=1)
-#
+
 # fig = plt.figure()
 # ax = plt.subplot(111)
 # ax.spines["top"].set_visible(False)
@@ -62,16 +62,16 @@ HISTOGRAM SCRIPT WITH ANIMATION
 
 
 
-device = HistoMode() #Create histogram object
-device.program_device()
-
-device.update_settings_file( ch_num = [5], trig_thres = [200],
- flat_time = [3], peak_time = [12], peak_gain = 0,
- flat_gain = 0, conversion_gain = [8], MCA_Time = 60, pol = '00000101',
- coin_window = 100, data_delay = 400, rec_sing = 0)
-device.auto_wirein()
-
-pulse_data = device.start_mca(ch_select = 5)
+# device = HistoMode() #Create histogram object
+# device.program_device()
+#
+# device.update_settings_file( ch_num = [5], trig_thres = [200],
+#  flat_time = [3], peak_time = [12], peak_gain = 0,
+#  flat_gain = 0, conversion_gain = [10], MCA_Time = 60, pol = '00000101',
+#  coin_window = 100, data_delay = 400, rec_sing = 0)
+# device.auto_wirein()
+#
+# pulse_data = device.start_mca(ch_select = 5)
 # indices = device.find_peaks(mph = 2000, threshold=0, mpd = 20)
 # print indices
 # #m,b = device.get_calibration()
@@ -119,28 +119,28 @@ pulse_data = device.start_mca(ch_select = 5)
 #
 # plt.show()
 
-#
-# """
-# LISTOGRAM SCRIPT
-# """
-#
-#
-# device = ListoMode() #Create histogram object
-# device.program_device()
-#
-# device.update_settings_file( ch_num = [5], trig_thres = [200],
-#  flat_time = [3], peak_time = [12], peak_gain = 0,
-#  flat_gain = 0, conversion_gain = [8], MCA_Time = 60, pol = '00000101',
-#  coin_window = 100, data_delay = 400, rec_sing = 0)
-# device.auto_wirein()
-# device.set_intervals(intvl = 1, cycle = 900)
-# list_data = device.run_listo(ch_select = 5)
-# file_name = "Drift_Data"
-# with open(file_name, 'wb') as csvfile:
-#     Writer = csv.writer(csvfile, delimiter = ',')
-#     for i in range(len(list_data)):
-#         Writer.writerow(list_data[i])
+
+"""
+LISTOGRAM SCRIPT
+"""
 
 
-#coarsen_data = device.coarsen_listo_data(list_data)
+device = ListoMode() #Create histogram object
+device.program_device()
+
+device.update_settings_file( ch_num = [5], trig_thres = [200],
+ flat_time = [3], peak_time = [12], peak_gain = 0,
+ flat_gain = 0, conversion_gain = [10], MCA_Time = 60, pol = '00000101',
+ coin_window = 100, data_delay = 400, rec_sing = 0)
+device.auto_wirein()
+device.set_intervals(intvl = 15, cycle = 225)
+list_data = device.run_listo(ch_select = 5)
+file_name = "Drift_Data_20180619_8intvl_30min_Larger_Offset"
+with open(file_name, 'wb') as csvfile:
+    Writer = csv.writer(csvfile, delimiter = ',')
+    for i in range(len(list_data)):
+        Writer.writerow(list_data[i])
+#
+#
+# coarsen_data = device.coarsen_listo_data(list_data)
 #device.plot_listo_data(coarsen_data, save_pdf = 1)
