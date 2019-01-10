@@ -72,12 +72,14 @@ class ScopeMode(RadDevice):
 
             #self.xem.ActivateTriggerIn(0x40,1)#Start Scope State Machine
             Buff_osc = bytearray(self.scope_samples*4)
-
+            dummy = bytearray(self.scope_samples*4)
+            self.xem.ReadFromPipeOut(ch_select+168, dummy) #Capturign Trap Buffer
             self.xem.ReadFromPipeOut(ch_select+160, Buff_osc)
+
             Pulse = pipeout_assemble(Buff_osc, 4)
             osc_values = []
             for i in range(len(Pulse)):
-                osc_values.append(bit_chop(Pulse[i], 13, 0, 32))
+                osc_values.append(bit_chop(Pulse[i], 13, 0, 32)) #Is 13 for regular pulses
             self.pulse_data.append(osc_values)
             ready = 0
             if plot == 1:

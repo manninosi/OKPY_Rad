@@ -136,7 +136,7 @@ def settings_update(Settings, **kwargs):
     #xem.SetWireInValue(0x09,ep09wire,2**32-1);
     # xem.UpdateWireIns()
     Data_Write.append([0x09, ep09wire, 0])
-    Data_Write.append([0x40, 3, 1])
+
 
     #Coincidence Mode Settings
     pol = int(Settings[8], 2)
@@ -147,6 +147,10 @@ def settings_update(Settings, **kwargs):
     ep0Ewire = coincidence_window + pol*(2^12) + scope_data_delay*(2^20)+rec_sing*(2^31);
     Data_Write.append([0x0E, ep0Ewire, 0])
 
+    #Filter Shaping Changes
+    Data_Write.append([0x40, 3, 1])
+    #Data_Write.append([0x40, 4, 1])
+    #Data_Write.append([0x40, 5, 1])
     with open('settings.csv', 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter= ',')
         for item in Data_Write:
