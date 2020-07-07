@@ -151,7 +151,7 @@ def settings_update(Settings, **kwargs):
     Data_Write.append([0x40, 3, 1])
     #Data_Write.append([0x40, 4, 1])
     #Data_Write.append([0x40, 5, 1])
-    with open('settings.csv', 'wb') as csvfile:
+    with open('settings.csv', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter= ',')
         for item in Data_Write:
             spamwriter.writerow(item)

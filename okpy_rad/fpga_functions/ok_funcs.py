@@ -9,11 +9,12 @@ An error will occur if the appropriate package is not imported.
 """
 import ok
 from tkinter import *
-from tkFileDialog import askopenfilename, asksaveasfilename
-from ok_analysis import *
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+#from tkFileDialog import askopenfilename, asksaveasfilename
+from .ok_analysis import *
 import csv
 import os
-from osu_rad_settings import settings_update
+from .osu_rad_settings import settings_update
 
 class RadDevice(object):
     """Class to connect radiation detection systems with FPGAs via Opal Kelly API.
@@ -35,7 +36,9 @@ class RadDevice(object):
         self.xem.OpenBySerial("")
         root = Tk()
         root.update()
+        print("Select Bit File...")
         Bit_File = askopenfilename()
+        print(Bit_File)
         root.update()
         root.destroy()
         error = self.xem.ConfigureFPGA(str(Bit_File))

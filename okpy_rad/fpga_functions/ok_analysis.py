@@ -25,7 +25,7 @@ def bit_chop(Data, msb, lsb, Total_Bits):
     """
     if msb < lsb:
 
-        print "msb variable must be larger than lsb"
+        print("msb variable must be larger than lsb")
         return None
     Buffer_bits = str(bin(Data)[2:])
     Reverse_bits = str(Buffer_bits[::-1])
