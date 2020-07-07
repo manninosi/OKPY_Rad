@@ -75,15 +75,16 @@ class RadDevice(object):
         file_dir = os.path.join(os.getcwd(), 'settings.csv')
         wire_in = []
         trigger_in = []
-        with open(file_dir, 'rb') as csvfile:
+        #REMOVED 'b' FROM OPEN AND WRITE FUNCTIONS
+        with open(file_dir, 'r') as csvfile:
             spamreader = csv.reader(csvfile, delimiter = ',')
             for row in spamreader:
                 if row[-1] == '0':
-                    values= (map(int,row))
+                    values= list((map(int,row)))
                     self.xem.SetWireInValue(values[0],values[1],2**32-1)
                     self.xem.UpdateWireIns()
                 elif row[-1] == '1':
-                    values = (map(int,row))
+                    values = list((map(int,row)))
                     self.xem.ActivateTriggerIn(values[0],values[1])
 
     def manual_wirein(self, address, value, mask = 2**32-1):
