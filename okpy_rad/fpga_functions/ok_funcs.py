@@ -40,10 +40,10 @@ class RadDevice(object):
         root.destroy()
         error = self.xem.ConfigureFPGA(str(Bit_File))
         if error != 0:
-            print "Error Connecting!"
+            print("Error Connecting!")
             sys.exit()
         else:
-            print "FPGA Connect and Programmed!"
+            print("FPGA Connect and Programmed!")
         return None
 
     def update_settings_file(self, ch_num = [1], trig_thres = [200],
@@ -112,5 +112,5 @@ class RadDevice(object):
         WARNING: Only use if you need to change the run mode to fit your needs.
         """
         self.run_mode = run_mode
-        self.xem.SetWiteInValue(0,01, self.run_mode, 2**32-1)
+        self.xem.SetWiteInValue(0,0x01, self.run_mode, 2**32-1)
         self.xem.UpdateWireIns()

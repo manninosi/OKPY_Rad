@@ -28,7 +28,7 @@ class ScopeMode(RadDevice):
         #Get ready signal to read out scope data
         self.xem.UpdateWireOuts()
         ready = bit_chop(self.xem.GetWireOutValue(0x21),ch_select, ch_select, 32)
-        print ready
+        print(ready)
         while ready == 0:
             self.xem.UpdateWireOuts()
             ready = bit_chop(self.xem.GetWireOutValue(0x21),ch_select, ch_select, 32)
@@ -93,7 +93,7 @@ class ScopeMode(RadDevice):
         #Set mode back to "stop"
         self.xem.SetWireInValue(0x01, 0, 2**3-1)
         self.xem.UpdateWireIns()
-        print "Scope Measurement Complete"
+        print("Scope Measurement Complete")
         return self.pulse_data
 
     def plot_pulse(self, pulse_data, max, min):

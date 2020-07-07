@@ -57,9 +57,9 @@ class HistoMode(RadDevice):
                     self.plot_mca(self.mca_data)
             self.data_acquired = 1
         else:
-            print "Run Mode is not set to 2 for MCA"#MCA run mode is 2
+            print( "Run Mode is not set to 2 for MCA")#MCA run mode is 2
             #Consider adding function to change mode
-        print "Histogram Run Complete."
+        print( "Histogram Run Complete.")
         return Data
 
     def plot_mca(self, data):
@@ -77,7 +77,7 @@ class HistoMode(RadDevice):
         """Finds indices of maximum for all peaks that exceed the set threshold
         """
         if self.data_acquired == 0:
-            print "Acquire MCA data before finding peaks"
+            print("Acquire MCA data before finding peaks")
             return None
         else:
             self.peak_ind =  detect_peaks(self.mca_data, mph=mph, mpd=mpd, threshold=threshold, edge=edge, kpsh=kpsh, valley=valley, show=show, ax=ax)
@@ -86,9 +86,9 @@ class HistoMode(RadDevice):
 
     def get_calibration(self):
         if self.data_acquired == 0:
-            print "Acquire MCA data before conducting calibration"
+            print("Acquire MCA data before conducting calibration")
         else:
-            print "There are %3.0f peaks that exceeded the threshold"%(len(self.peak_ind))
+            print("There are %3.0f peaks that exceeded the threshold"%(len(self.peak_ind)))
             Cal_Check = 'Y'
             Energies = []
             Cal_Points = []
@@ -112,7 +112,7 @@ class HistoMode(RadDevice):
             x_coords, y_coords = zip(*points)
             A = np.vstack([x_coords,np.ones(len(x_coords))]).T
             m, c = np.linalg.lstsq(A, y_coords)[0]
-            print "Line Solution is y = {m}x + {c}".format(m=m,c=c)
+            print("Line Solution is y = {m}x + {c}".format(m=m,c=c))
 
             Save_Q = raw_input("Save solution as pickle? (Y/N)")
             if Save_Q == 'Y':

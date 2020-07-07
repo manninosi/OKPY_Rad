@@ -59,9 +59,9 @@ class ListoMode(RadDevice):
             if start_mca_read == 1:
                 Buf_Data = bytearray(4*4096)
                 self.xem.ReadFromPipeOut(176 + ch_select, Buf_Data)
-                print sum(pipeout_assemble(Buf_Data,4))
+                print(sum(pipeout_assemble(Buf_Data,4)))
                 listo_data.append(pipeout_assemble(Buf_Data,4))
-                print "The current interval is: %3.0f" %count
+                print("The current interval is: %3.0f" %count)
                 count += 1
         return listo_data
 
@@ -69,7 +69,7 @@ class ListoMode(RadDevice):
         """Takes in listogram data intervals and will combine set_intervals
         as specified by the user. """
         listo_data = np.array(listo_data)
-        print "There are %3.0f intervals in this data" %(len(listo_data))
+        print("There are %3.0f intervals in this data" %(len(listo_data)))
 
         self.Interval_Comb = input("Enter the number of seconds to combine listogram data: ")
         self.Interval_Tot = len(listo_data)/self.Interval_Comb #Will determin how many iterations to combine data

@@ -40,7 +40,7 @@ def settings_update(Settings, **kwargs):
     #xem.UpdateWireIns()
     peaking_gain = Settings[4]; # 0-3; mult x1, x2, x4, x8
     flat_gain = Settings[5];    # 0-3; mult x1, x2, x4, x8
-    trap_gain = peaking_gain + flat_gain*2**2;
+    trap_gain = peaking_gain + flat_gain*2**2
     Scope_Samples = 2**12
 
     ep01wire = run_mode + gate*(2**3) + time_mode*(2**5) + pileup*(2**6) + trap_gain*(2**10) + (Scope_Samples-1) * (2**15)
@@ -82,9 +82,9 @@ def settings_update(Settings, **kwargs):
        trap_peak[4]+trap_flat[4]*(2**4),trap_peak[5]+trap_flat[5]*(2**4),\
        trap_peak[6]+trap_flat[6]*(2**4),trap_peak[7]+trap_flat[7]*(2**4)]
     ep06wire = shaping_pars[0] + shaping_pars[1]*(2**8)\
-       + shaping_pars[2]*(2**16) + shaping_pars[3]*(2**24);
+       + shaping_pars[2]*(2**16) + shaping_pars[3]*(2**24)
     ep07wire = shaping_pars[4] + shaping_pars[5]*(2**8)\
-       + shaping_pars[6]*(2**16) + shaping_pars[7]*(2**24);
+       + shaping_pars[6]*(2**16) + shaping_pars[7]*(2**24)
 
     Data_Write.append([0x06, ep06wire, 0])
     Data_Write.append([0x07, ep07wire, 0])
@@ -107,9 +107,9 @@ def settings_update(Settings, **kwargs):
        trig_peak[4]+trig_flat[4]*(2**4),trig_peak[5]+trig_flat[5]*(2**4),\
        trig_peak[6]+trig_flat[6]*(2**4),trig_peak[7]+trig_flat[7]*(2**4)]
     ep0Fwire = trig_shaping_pars[0] + trig_shaping_pars[1]*(2**8)\
-       + trig_shaping_pars[2]*(2**16) + trig_shaping_pars[3]*(2**24);
+       + trig_shaping_pars[2]*(2**16) + trig_shaping_pars[3]*(2**24)
     ep15wire = trig_shaping_pars[4] + trig_shaping_pars[5]*(2**8)\
-       + trig_shaping_pars[6]*(2**16) + shaping_pars[7]*(2**24);
+       + trig_shaping_pars[6]*(2**16) + shaping_pars[7]*(2**24)
 
     Data_Write.append([0x0F, ep0Fwire, 0])
     Data_Write.append([0x15, ep15wire, 0])
@@ -119,8 +119,8 @@ def settings_update(Settings, **kwargs):
 
     mca_time = Settings[7] # in s, down to ~0.01s
     ct_lsb = 2**17*8E-9; # position of time inside FPGA * sys_clk period in sec
-    collection_time = int(round(mca_time/ct_lsb));
-    ep08wire = collection_time;
+    collection_time = int(round(mca_time/ct_lsb))
+    ep08wire = collection_time
     # xem.SetWireInValue(0x08,ep08wire,2**32-1);
     Data_Write.append([0x08, ep08wire, 0])
     conversion_gains = [7,7,7,7,7,7,7,7]; # range 0-15
@@ -132,7 +132,7 @@ def settings_update(Settings, **kwargs):
     ep09wire = conversion_gains[0] + conversion_gains[1]*(2**4)\
         + conversion_gains[2]*(2**8) + conversion_gains[3]*(2**12)\
         + conversion_gains[4]*(2**16) + conversion_gains[5]*(2**20)\
-        + conversion_gains[6]*(2**24) + conversion_gains[7]*(2**28);
+        + conversion_gains[6]*(2**24) + conversion_gains[7]*(2**28)
     #xem.SetWireInValue(0x09,ep09wire,2**32-1);
     # xem.UpdateWireIns()
     Data_Write.append([0x09, ep09wire, 0])
@@ -144,7 +144,7 @@ def settings_update(Settings, **kwargs):
     scope_data_delay = Settings[10]
     rec_sing = Settings[11]
 
-    ep0Ewire = coincidence_window + pol*(2^12) + scope_data_delay*(2^20)+rec_sing*(2^31);
+    ep0Ewire = coincidence_window + pol*(2^12) + scope_data_delay*(2^20)+rec_sing*(2^31)
     Data_Write.append([0x0E, ep0Ewire, 0])
 
     #Filter Shaping Changes
