@@ -116,5 +116,56 @@ class RadDevice(object):
         WARNING: Only use if you need to change the run mode to fit your needs.
         """
         self.run_mode = run_mode
-        self.xem.SetWiteInValue(0,0x01, self.run_mode, 2**32-1)
+        self.xem.SetWireInValue(0,0x01, self.run_mode, 2**32-1)
         self.xem.UpdateWireIns()
+
+    def dac_update(self, dac_value):
+        """Turns on SPI interface and DAC interface to adjust DAC values.
+        DAC interface can be applied to individual channels. Current design will
+        include all channels.  
+
+        Input:
+            dac_value(int): 0->4096 integer value to adjust voltage levels
+
+        """
+        #COPYING MOST STEPS FROM ERIC'S CODE
+        self.xem.SetWireInValue(13, 2**28, 2**28)
+        self.xem.UpdateWireIns()
+        """
+        DAC SPI address and data
+            31-28   27-24   23-20   19-8
+            Prefix  opcode  addr    data
+            ADDRESSES (see schematic)
+            Ch.1: 1        Ch.5: 6
+            Ch.2: 3        Ch.6: 4
+            Ch.3: 7        Ch.7: 0
+            Ch.4: 5        Ch.8: 2
+        """ 
+        #Might be ablet o use this value later
+        dac_ch_addr = [1,3,7,5,6,4,0,2]
+
+        #ENABLING DAC SPI 
+        dac_spi_opcode = 3 #DAC SPI operation code; "0011" for write and update
+        dac_spi_addr = 15 #DAC SPI register address. "0000" for Ch1, "0001" for Ch2, "0010" for Ch3, etc; "1111" for all Ch. 
+        dac_spi_data = dac_value # value into the DAC SPI register (0-4095). DAC digital value for voltage
+        dac_spi_feat = 0 # value into DAC SPI register for special commands
+        ep0Dwire = dac_spi_opcode*(2**0) + dac_spi_addr*(2**4) + dac_spi_data*(2**8) + dac_spi_feat*(2**20)
+        self.xem.SetWireInValue(13, ep0Dwire, 2**28-1)
+        self.xem.UpdateWireIns()
+
+        #Send 1st part of digital reset command to SPI
+        self.xem.ActivateTriggerIn(67,0)
+        self.xem.UpdateWireOuts()
+        ep21wire = self.xem.GetWireOutValue(33)
+        dac_spi_ready = bit_chop(ep21wire, 28, 28, 32)
+        while(dac_spi_ready == 0):
+            self.xem.UpdateWireOuts()
+            ep21wire = self.xem.GetWireOutValue(33)
+            dac_spi_ready = bit_chop(ep21wire, 28, 28, 32)
+        print("DAC SPI Data Sent")
+
+        self.xem.SetWireInValue(13,0,2**28)
+        self.xem.UpdateWireIns
+        print("DAC now off")
+            
+        
