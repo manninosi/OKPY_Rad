@@ -16,14 +16,14 @@ SCOPE PORTION
 device = ScopeMode(scope_samples = (2**12))#Create scope object
 
 device.program_device()
-device.update_settings_file( ch_num = [5], trig_thres = [200],
+device.update_settings_file( ch_num = [3], trig_thres = [10],
  flat_time = [4], peak_time = [8], peak_gain = 0,
- flat_gain = 0, conversion_gain = [7], MCA_Time = 60, pol = '00000000',
- coin_window = 100, data_delay = 400, rec_sing = 0, trig_flat = [0], trig_peak = [8])
+ flat_gain = 0, conversion_gain = [1], MCA_Time = 60, pol = '00000000',
+ coin_window = 100, data_delay = 100, rec_sing = 0, trig_flat = [8], trig_peak = [8])
 # device.auto_wirein()
 device.auto_wirein()
 device.update_settings_file()
-pulse_data = device.get_pulse_data(ch_select = 5, num_pulses=500, plot=1)
+pulse_data = device.get_pulse_data(ch_select = 3, num_pulses=40000, plot=1)
 
 
 """
@@ -69,16 +69,16 @@ HISTOGRAM SCRIPT WITH ANIMATION
 
 
 
-device = HistoMode() #Create histogram object
-device.program_device()
+# device = HistoMode() #Create histogram object
+# device.program_device()
 
-device.update_settings_file( ch_num = [1], trig_thres = [300],
- flat_time = [3], peak_time = [12], peak_gain = 0,
- flat_gain = 0, conversion_gain = [8], MCA_Time = 60, pol = '00000000',
- coin_window = 100, data_delay = 400, rec_sing = 0, trig_flat = [0], trig_peak = [6])
-device.auto_wirein()
+# device.update_settings_file( ch_num = [3], trig_thres = [10],
+#  flat_time = [5], peak_time = [5], peak_gain = 0,
+#  flat_gain = 0, conversion_gain = [12], MCA_Time = 30, pol = '00000000',
+#  coin_window = 100, data_delay = 400, rec_sing = 0, trig_flat = [13], trig_peak = [13])
+# device.auto_wirein()
 
-pulse_data = device.start_mca(ch_select = 1)
+# pulse_data = device.start_mca(ch_select = 3)
 
 
 

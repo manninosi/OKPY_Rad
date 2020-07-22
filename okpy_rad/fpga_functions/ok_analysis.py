@@ -60,12 +60,12 @@ def pipeout_assemble(Data, Bytes):
     """
     Buffer = bytes(Data)
     Buffer_Reverse = Buffer[::-1]
-    Samples = len(Buffer)/Bytes #Should correspond to how many bytes are in each pipe out read
+    Samples = int(len(Buffer)/Bytes) #Should correspond to how many bytes are in each pipe out read
     Output_Reversed = [] #Output must be reversed to account for the way OK reads in data
 
     for i in range(Samples):
         #Convert the specified "byte chunks" into an interger and add to array
-        Output_Reversed.append(int(Buffer_Reverse[(i*4):4+(i*4)].encode('hex'),16))
+        Output_Reversed.append(int.from_bytes(Buffer_Reverse[(i*4):4+(i*4)], 'big'))
     result = Output_Reversed[::-1]
     return result
 

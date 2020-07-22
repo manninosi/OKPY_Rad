@@ -30,6 +30,7 @@ class ScopeMode(RadDevice):
         ready = bit_chop(self.xem.GetWireOutValue(0x21),ch_select, ch_select, 32)
         print(ready)
         while ready == 0:
+            print('Not Ready') 
             self.xem.UpdateWireOuts()
             ready = bit_chop(self.xem.GetWireOutValue(0x21),ch_select, ch_select, 32)
 
@@ -43,6 +44,7 @@ class ScopeMode(RadDevice):
         self.pulse_data.append(osc_values)        #Set mode back to "stop"
         self.xem.SetWireInValue(0x01, 0, 2**3-1)
         self.xem.UpdateWireIns()
+        self.xem.ActivateTriggerIn(0x40, 2**(3+ch_select)) #Trigger OSC state machine to move to next state
         return Pulse
 
     def get_pulse_data(self, num_pulses = 100, plot = 1, ch_select = 5):
@@ -61,38 +63,41 @@ class ScopeMode(RadDevice):
         ready = bit_chop(self.xem.GetWireOutValue(0x21),ch_select-1, ch_select-1, 32)
         decide_range = 1
         for i in range(num_pulses):
-            while ready == 0:
-                #print "Stuck"
+            self.xem.UpdateWireOuts()
+            ready = bit_chop(self.xem.GetWireOutValue(0x21),ch_select-1, ch_select-1, 32)
+            print(ready)
+            while ready == 1:
                 self.xem.UpdateWireOuts()
                 ready = bit_chop(self.xem.GetWireOutValue(0x21),ch_select-1, ch_select-1, 32)
                 #Buff_osc = bytearray(self.scope_samples*4)
                 #self.xem.ReadFromPipeOut(ch_select+160, Buff_osc)
-                self.xem.ActivateTriggerIn(0x40, 2**(ch_select+3))
-                self.xem.ActivateTriggerIn(0x40,1)#Start Scope State Machine
+                # self.xem.ActivateTriggerIn(0x40, 2**(ch_select+3))
+                # self.xem.ActivateTriggerIn(0x40,1)#Start Scope State Machine
 
             #self.xem.ActivateTriggerIn(0x40,1)#Start Scope State Machine
-            Buff_osc = bytearray(self.scope_samples*4)
-            dummy = bytearray(self.scope_samples*4)
-            self.xem.ReadFromPipeOut(ch_select+168, dummy) #Capturign Trap Buffer
-            self.xem.ReadFromPipeOut(ch_select+160, Buff_osc)
+                Buff_osc = bytearray(self.scope_samples*4)
+                dummy = bytearray(self.scope_samples*4)
+                self.xem.ReadFromPipeOut(ch_select+168, dummy) #Capturign Trap Buffer
+                self.xem.ReadFromPipeOut(ch_select+160, Buff_osc)
+            # print("Made It Here")
 
-            Pulse = pipeout_assemble(Buff_osc, 4)
-            osc_values = []
-            for i in range(len(Pulse)):
-                osc_values.append(bit_chop(Pulse[i], 13, 0, 32)) #Is 13 for regular pulses
-            self.pulse_data.append(osc_values)
-            ready = 0
-            if plot == 1:
-                #Test plotting with real bit file
-                if decide_range == 1:
-                    maxi = max(osc_values)
-                    mini = min(osc_values)
-                    decide_range = 0
-                self.plot_pulse(osc_values, (maxi+10), (mini-10))
-            self.xem.ActivateTriggerIn(0x40, ch_select+3)
+                Pulse = pipeout_assemble(Buff_osc, 4)
+                osc_values = []
+                for y in range(len(Pulse)):
+                    osc_values.append(bit_chop(Pulse[y], 13, 0, 32)) #Is 13 for regular pulses
+                self.pulse_data.append(osc_values)
+                if plot == 1:
+                    #Test plotting with real bit file
+                    if decide_range == 1:
+                        maxi = max(osc_values)
+                        mini = min(osc_values)
+                        decide_range = 1 
+                    self.plot_pulse(osc_values, (maxi+10), (mini-10))
+                print("Trigger Done Read here!")
+                self.xem.ActivateTriggerIn(0x40, ch_select+3)
         #Set mode back to "stop"
-        self.xem.SetWireInValue(0x01, 0, 2**3-1)
-        self.xem.UpdateWireIns()
+        # self.xem.SetWireInValue(0x01, 0, 2**3-1)
+        # self.xem.UpdateWireIns()
         print("Scope Measurement Complete")
         return self.pulse_data
 
